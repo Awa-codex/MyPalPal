@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "208312777255",
+    "firebase_url": "https://my-pal-pal.firebaseio.com",
+    "project_id": "my-pal-pal",
+    "storage_bucket": "my-pal-pal.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:208312777255:android:dfaa0b7b3d4cb08e226c02",
+        "android_client_info": {
+          "package_name": "com.mypal.mypalpal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "208312777255-pqe650hriq452obrggsjrrg0clpchoat.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjwutlomjxDCdAQ0fCDyMheJktp_I5VGY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "208312777255-pqe650hriq452obrggsjrrg0clpchoat.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
