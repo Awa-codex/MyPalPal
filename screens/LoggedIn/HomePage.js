@@ -1,19 +1,64 @@
-import { NavigationContainer } from '@react-navigation/native';
 import React, {useState, useEffect} from 'react';
 import { StyleSheet, TouchableOpacity ,TextInput,Text, View, Button} from 'react-native';
 import { color } from 'react-native-reanimated';
-import { createStackNavigator } from '@react-navigation/stack';
+import FirebaseAuth from '../FirebaseAuth';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+const Tab = createBottomTabNavigator();
+
+ 
 
 
-export default function LoggedIn({navigation}) {
+export default function HomePage({navigation}) {
 
+  const [email, setEmail] = useState('');
+  const [user, setUser] = useState('');
 
+  const clearInputs = () =>{
+    setEmail('');
+    setPassword('');
+  }
 
+  const handleLogout = () =>{
+    FirebaseAuth.auth().signOut().then(()=>
+    {    
+     
+      console.log('you are out');
+      navigation.navigate('LogIn');
+    }).catch((error)=>{
+
+  });
+  };
+    
+    const authListener = ()=>{
+      FirebaseAuth.auth().onAuthStateChanged((user) =>{
+        if(user){
+         console.log('User email: ', user);
+         setEmail(user.email);
+         setUser(user);
+        } 
+        else{
+          setUser('');
+        }
+      })
+    };
+    
+    useEffect(()=>{
+      authListener();
+    },[]);
+
+   
   return (
+    
     <View style={styles.container}>
-        <Text>You have logged in!</Text>
-        <Button title="Go back" onPress={() => navigation.goBack()} />
-    </View>
+       <Text>You have logged in {email}</Text>
+        <Button title="Sign Out" onPress={handleLogout} />
+    </View> 
+    
+     
+    
+     
   );
 }
 

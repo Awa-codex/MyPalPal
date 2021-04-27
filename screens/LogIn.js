@@ -2,19 +2,92 @@ import { NavigationContainer } from '@react-navigation/native';
 import React, {useState, useEffect} from 'react';
 import { StyleSheet, TouchableOpacity ,TextInput,Text, View} from 'react-native';
 import { color } from 'react-native-reanimated';
-import {LoggedIn} from './LoggedIn/LoggedIn';
+import {LoggedIn} from './LoggedIn/HomePage';
 //import {  } from '../components/Themed';
-
+import FirebaseAuth from './FirebaseAuth.js'
 export default function LogIn({navigation}) {
 
+    //Constants
+    const [user, setUser] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
 
 
+
+    //Functions
+    
+
+    const handleLogin = () => {
+        clearErrors();
+        FirebaseAuth
+          .auth()
+          .signInWithEmailAndPassword(email,password).then(()=>
+          {    
+            console.log('all good');
+            navigation.navigate('LoggedIn')
+          }).catch((err)=>{switch(err.code){
+            case "auth/invalid-email":
+            case "auth/user-disable":
+            case "auth/user-not-found":
+              setEmailError(err.message);
+              break;
+            case "auth/wrong-password":
+              setPasswordError(err.message);
+              break; 
+          }
+        });
+    };
+            
+
+/*
+          .catch(err => {
+            switch(err.code){
+              case "auth/invalid-email":
+              case "auth/user-disable":
+              case "auth/user-not-found":
+                setEmailError(err.message);
+                break;
+              case "auth/wrong-password":
+                setPasswordError(err.message);
+                break; 
+            }
+          });
+            if(emailError ==="" && passwordError==="")
+            {
+                navigation.navigate('LoggedIn')
+            }
+      };
+*/
+      const clearErrors = () =>{
+        setEmailError('');
+        setPasswordError('');
+      }
+
+      const authListener = ()=>{
+        FirebaseAuth.auth().onAuthStateChanged((user) =>{
+          if(user){
+            setUser(user);
+          } 
+          else{
+            setUser('');
+          }
+        })
+      };
+
+
+    useEffect(()=>{
+        authListener();
+      },[]);
+  
+     
+
   return (
+        //LOG IN PAGE
     <View style={styles.container}>
+        
+        {/* Email field */}
        <View style={styles.inputContainer}>
             <TextInput
                 style={styles.input}
@@ -23,9 +96,11 @@ export default function LogIn({navigation}) {
                 placeholder="Email"
                 keyboardType="characters"
             />
-            <Text>{emailError}</Text>
+          
         </View>
-         {/* Password field */}
+        
+        
+        {/* Password field */}
         <View style={styles.inputContainer}>   
             <TextInput
                 style={styles.input}
@@ -34,19 +109,37 @@ export default function LogIn({navigation}) {
                 placeholder="Password"
                 secureTextEntry={true} 
             />
-            <Text>{passwordError}</Text>
+           
         </View>     
+        
+        {/* LogIn Button*/}
         <TouchableOpacity
             style={styles.touchableView}
             title="Login"
-            onPress={()=> {navigation.navigate('LoggedIn')}}
-            //onPress={()=>{navigation.navigate('HomeWelcomeScreen',{email :email,password:password,})}}
+            onPress={handleLogin}
             >
             <Text style={{color:'white', alignItems:'center', paddingTop:13}}>Log In</Text>
         </TouchableOpacity>
+        
+        {/* Reset Password Link*/}
+        <Text 
+        onPress={()=>{navigation.navigate('ResetPassword')}}>
+            Forgot Password?
+        </Text>
 
-        <Text>Forgot Password?</Text>
-        <Text style={{color:'black',  }}>New? Sign in!</Text>
+        {/* Sign In Link*/}
+        <Text
+        style={{color:'black', paddingTop:10 }} 
+        onPress={()=>{navigation.navigate('SignIn')}}>
+            New? Sign in!
+        </Text>
+    
+        {/*Error messages*/}
+        <View style={styles.ErrorMessageBox}>
+        <Text >{emailError}</Text>
+        <Text >{passwordError}</Text>
+        </View>
+    
     </View>
   );
 }
@@ -68,7 +161,7 @@ const styles = StyleSheet.create({
   },
   input:{
     width: '80%',
-    color:'white',
+    color:'black',
     height:50,
     borderRadius:10},
 
@@ -81,15 +174,7 @@ inputContainer: {
     paddingLeft:10,
     borderRadius:10
     },
-touchableView:{
-    marginBottom:15,
-    width: '80%',
-    height: 50,
-    alignItems:'center',
-    backgroundColor:'grey',
-    borderWidth:1,
-    borderRadius:10,
-    },
+
 touchableView:{
     marginBottom:15,
     width: '80%',
@@ -99,5 +184,12 @@ touchableView:{
     borderWidth:1,
     borderRadius:10,
     },
+
+ErrorMessageBox:{
+    marginTop:50,
+    width: '80%',
+    height:30,
+    
+}
 
 });
